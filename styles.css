@@ -27,8 +27,8 @@ body::before {
   position: fixed;
   inset: 0;
   background: url("background.jpg") center/cover no-repeat;
-  filter: blur(4px) brightness(0.55);
-  transform: scale(1.04);
+  filter: blur(2px) brightness(0.72);
+  transform: scale(1.02);
   z-index: -2;
 }
 
@@ -36,9 +36,9 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 20% 10%, rgba(192, 119, 255, 0.26), transparent 48%),
-    radial-gradient(circle at 80% 0%, rgba(143, 94, 255, 0.2), transparent 40%),
-    linear-gradient(160deg, rgba(11, 11, 16, 0.7), rgba(11, 11, 16, 0.92));
+  background: radial-gradient(circle at 20% 10%, rgba(192, 119, 255, 0.2), transparent 48%),
+    radial-gradient(circle at 80% 0%, rgba(143, 94, 255, 0.14), transparent 40%),
+    linear-gradient(160deg, rgba(11, 11, 16, 0.46), rgba(11, 11, 16, 0.72));
   z-index: -1;
 }
 
