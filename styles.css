@@ -98,6 +98,23 @@ body::after {
   line-height: 1.6;
 }
 
+.hero__checklist {
+  margin: 2px 0 0;
+  padding-left: 24px;
+  max-width: 620px;
+  color: #ece3f6;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.hero__checklist li::marker {
+  color: var(--accent);
+}
+
+.hero__checklist strong {
+  color: #ffffff;
+}
+
 .content {
   display: grid;
   gap: 26px;
@@ -397,13 +414,6 @@ body::after {
 .genre-option input:focus-visible + span {
   outline: 2px solid rgba(255, 255, 255, 0.8);
   outline-offset: 2px;
-}
-
-.helper-copy {
-  margin: -2px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.5;
 }
 
 .form-status {
