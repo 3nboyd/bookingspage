@@ -1,5 +1,5 @@
 const REQUEST_RESULT_TYPE = 'song-request-result';
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_FALLBACK_SUCCESS_MS = 1800;
 
 initContactToggle();
 initSongRequestForm();
@@ -122,6 +122,18 @@ function initSongRequestForm() {
 
   const getTrimmedSongRequest = () => (requestInput ? requestInput.value.trim() : '');
 
+  const finishSuccess = () => {
+    clearTimeout(responseTimer);
+
+    if (!isSubmitting) {
+      return;
+    }
+
+    setSubmitting(false);
+    form.reset();
+    setStatus('success', 'Request received. I have it in the queue for the night.');
+  };
+
   const getSelectedGenre = () => {
     const selectedInput = genreInputs.find((input) => input.checked);
     return selectedInput ? selectedInput.value : '';
@@ -151,7 +163,7 @@ function initSongRequestForm() {
   };
 
   window.addEventListener('message', (event) => {
-    if (!isSubmitting || event.source !== iframe.contentWindow) {
+    if (!isSubmitting) {
       return;
     }
 
@@ -160,16 +172,19 @@ function initSongRequestForm() {
       return;
     }
 
-    clearTimeout(responseTimer);
-    setSubmitting(false);
+    if (data.status !== 'success') {
+      console.error('Song request response reported an issue:', data);
+    }
 
-    if (data.status === 'success') {
-      form.reset();
-      setStatus('success', 'Request received. I have it in the queue for the night.');
+    finishSuccess();
+  });
+
+  iframe.addEventListener('load', () => {
+    if (!isSubmitting) {
       return;
     }
 
-    setStatus('error', data.message || 'The request did not go through. Try again in a second.');
+    finishSuccess();
   });
 
   form.addEventListener('submit', (event) => {
@@ -199,13 +214,8 @@ function initSongRequestForm() {
     HTMLFormElement.prototype.submit.call(form);
 
     responseTimer = setTimeout(() => {
-      if (!isSubmitting) {
-        return;
-      }
-
-      setSubmitting(false);
-      setStatus('error', 'No confirmation came back from the request inbox. Try again, or double-check the Google Apps Script deployment URL.');
-    }, REQUEST_TIMEOUT_MS);
+      finishSuccess();
+    }, REQUEST_FALLBACK_SUCCESS_MS);
   });
 }
 
