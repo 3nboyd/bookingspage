@@ -4,7 +4,7 @@ This folder contains the Google Apps Script backend for the song request page.
 
 ## 1. Create the Google Sheet
 
-1. Sign in as `nboyd3@nd.edu`.
+1. Sign in as `noahbboyd@gmail.com`.
 2. Create a new Google Sheet.
 3. Copy the spreadsheet ID from the URL.
 
@@ -36,4 +36,4 @@ This folder contains the Google Apps Script backend for the song request page.
 1. Open the song request page.
 2. Submit a test request.
 3. Confirm the Google Sheet gets a new row in the `Requests` tab.
-4. Confirm `nboyd3@nd.edu` receives the notification email.
+4. Confirm `noahbboyd@gmail.com` receives the notification email.

@@ -1,6 +1,6 @@
 const SPREADSHEET_ID = 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
 const REQUEST_SHEET_NAME = 'Requests';
-const NOTIFICATION_EMAIL = 'nboyd3@nd.edu';
+const NOTIFICATION_EMAIL = 'noahbboyd@gmail.com';
 const ALLOWED_GENRES = ['Pop', 'House', 'RNB', 'Latin', 'Rock', 'Country'];
 
 function doPost(e) {
