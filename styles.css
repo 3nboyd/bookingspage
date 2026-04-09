@@ -90,31 +90,6 @@ body::after {
   text-transform: uppercase;
 }
 
-.hero__lede {
-  margin: 0;
-  color: #d7d8e4;
-  max-width: 620px;
-  font-size: 18px;
-  line-height: 1.6;
-}
-
-.hero__checklist {
-  margin: 2px 0 0;
-  padding-left: 24px;
-  max-width: 620px;
-  color: #ece3f6;
-  font-size: 17px;
-  line-height: 1.7;
-}
-
-.hero__checklist li::marker {
-  color: var(--accent);
-}
-
-.hero__checklist strong {
-  color: #ffffff;
-}
-
 .content {
   display: grid;
   gap: 26px;
@@ -414,6 +389,37 @@ body::after {
 .genre-option input:focus-visible + span {
   outline: 2px solid rgba(255, 255, 255, 0.8);
   outline-offset: 2px;
+}
+
+.request-checklist {
+  margin-top: -4px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.request-checklist__title {
+  margin: 0 0 8px;
+  color: #ece3f6;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.request-checklist__list {
+  margin: 0;
+  padding-left: 22px;
+  color: #ece3f6;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.request-checklist__list li::marker {
+  color: var(--accent);
+}
+
+.request-checklist__list strong {
+  color: #ffffff;
 }
 
 .form-status {

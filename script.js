@@ -1,6 +1,3 @@
-const REQUEST_RESULT_TYPE = 'song-request-result';
-const REQUEST_FALLBACK_SUCCESS_MS = 1800;
-
 initContactToggle();
 initSongRequestForm();
 
@@ -93,11 +90,9 @@ function initSongRequestForm() {
   const submitButton = document.getElementById('song-request-submit');
   const requestInput = document.getElementById('song-request');
   const genreInputs = Array.from(form.querySelectorAll('input[name="genre"]'));
-  const iframe = document.getElementById('song-request-target');
   const configuredEndpoint = getSongRequestEndpoint();
 
   let isSubmitting = false;
-  let responseTimer;
 
   const setStatus = (type, message) => {
     if (!statusNode) {
@@ -121,18 +116,6 @@ function initSongRequestForm() {
   };
 
   const getTrimmedSongRequest = () => (requestInput ? requestInput.value.trim() : '');
-
-  const finishSuccess = () => {
-    clearTimeout(responseTimer);
-
-    if (!isSubmitting) {
-      return;
-    }
-
-    setSubmitting(false);
-    form.reset();
-    setStatus('success', 'Request received. I have it in the queue for the night.');
-  };
 
   const getSelectedGenre = () => {
     const selectedInput = genreInputs.find((input) => input.checked);
@@ -162,31 +145,6 @@ function initSongRequestForm() {
     return true;
   };
 
-  window.addEventListener('message', (event) => {
-    if (!isSubmitting) {
-      return;
-    }
-
-    const { data } = event;
-    if (!data || typeof data !== 'object' || data.type !== REQUEST_RESULT_TYPE) {
-      return;
-    }
-
-    if (data.status !== 'success') {
-      console.error('Song request response reported an issue:', data);
-    }
-
-    finishSuccess();
-  });
-
-  iframe.addEventListener('load', () => {
-    if (!isSubmitting) {
-      return;
-    }
-
-    finishSuccess();
-  });
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -209,13 +167,11 @@ function initSongRequestForm() {
 
     form.action = configuredEndpoint;
     setSubmitting(true);
-    setStatus('sending', 'Sending your request...');
-    clearTimeout(responseTimer);
+    setStatus('sending', 'Thanks! Sending your request...');
     HTMLFormElement.prototype.submit.call(form);
-
-    responseTimer = setTimeout(() => {
-      finishSuccess();
-    }, REQUEST_FALLBACK_SUCCESS_MS);
+    form.reset();
+    setSubmitting(false);
+    setStatus('success', 'Thanks! Your request was sent.');
   });
 }
 
