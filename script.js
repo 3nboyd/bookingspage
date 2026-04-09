@@ -1,3 +1,5 @@
+const REQUEST_THANK_YOU_DELAY_MS = 250;
+
 initContactToggle();
 initSongRequestForm();
 
@@ -167,11 +169,13 @@ function initSongRequestForm() {
 
     form.action = configuredEndpoint;
     setSubmitting(true);
-    setStatus('sending', 'Thanks! Sending your request...');
+    setStatus('sending', 'Sending your request...');
     HTMLFormElement.prototype.submit.call(form);
-    form.reset();
-    setSubmitting(false);
-    setStatus('success', 'Thanks! Your request was sent.');
+    window.setTimeout(() => {
+      form.reset();
+      setSubmitting(false);
+      setStatus('success', 'Thanks! Your request was sent.');
+    }, REQUEST_THANK_YOU_DELAY_MS);
   });
 }
 
