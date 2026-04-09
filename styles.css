@@ -96,8 +96,9 @@ body::after {
 }
 
 .hero__detail--link {
-  color: #f1d7ff;
+  color: #efb7ff;
   text-decoration: none;
+  text-shadow: 0 0 14px rgba(192, 119, 255, 0.45);
 }
 
 .hero__detail--link:hover {
