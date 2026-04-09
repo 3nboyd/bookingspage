@@ -2,8 +2,6 @@ const SPREADSHEET_ID = 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
 const REQUEST_SHEET_NAME = 'Requests';
 const NOTIFICATION_EMAIL = 'noahbboyd@gmail.com';
 const ALLOWED_GENRES = ['Pop', 'House', 'RNB', 'Latin', 'Rock', 'Country'];
-const SONG_REQUEST_FALLBACK = 'No specific song provided';
-const GENRE_FALLBACK = 'No genre selected';
 
 function doPost(e) {
   try {
@@ -16,15 +14,15 @@ function doPost(e) {
       return buildIframeResponse_({ type: 'song-request-result', status: 'success' });
     }
 
-    if (!songRequest && !genre) {
+    if (!songRequest || !genre) {
       return buildIframeResponse_({
         type: 'song-request-result',
         status: 'error',
-        message: 'A song request or genre is required.'
+        message: 'Missing required fields.'
       });
     }
 
-    if (genre && !ALLOWED_GENRES.includes(genre)) {
+    if (!ALLOWED_GENRES.includes(genre)) {
       return buildIframeResponse_({
         type: 'song-request-result',
         status: 'error',
@@ -32,19 +30,17 @@ function doPost(e) {
       });
     }
 
-    const songRequestValue = songRequest || SONG_REQUEST_FALLBACK;
-    const genreValue = genre || GENRE_FALLBACK;
     const sheet = getRequestSheet_();
-    sheet.appendRow([new Date(), escapeFormula_(songRequestValue), genreValue]);
+    sheet.appendRow([new Date(), escapeFormula_(songRequest), genre]);
 
     MailApp.sendEmail({
       to: NOTIFICATION_EMAIL,
-      subject: 'New DJ request received',
+      subject: `New DJ request: ${genre}`,
       body: [
         'A new song request came in.',
         '',
-        `Song Request: ${songRequestValue}`,
-        `Genre: ${genreValue}`,
+        `Song Request: ${songRequest}`,
+        `Genre: ${genre}`,
         `Timestamp: ${new Date().toLocaleString()}`
       ].join('\n')
     });

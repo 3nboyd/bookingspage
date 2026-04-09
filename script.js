@@ -128,10 +128,18 @@ function initSongRequestForm() {
     const songRequest = getTrimmedSongRequest();
     const genre = getSelectedGenre();
 
-    if (!songRequest && !genre) {
-      setStatus('error', 'Add a song request, pick a genre, or do both before you send it.');
+    if (!songRequest) {
+      setStatus('error', 'Add the song name and artist before you send the request.');
       if (requestInput) {
         requestInput.focus();
+      }
+      return false;
+    }
+
+    if (!genre) {
+      setStatus('error', 'Pick a genre so I know where the request should land.');
+      if (genreInputs[0]) {
+        genreInputs[0].focus();
       }
       return false;
     }
