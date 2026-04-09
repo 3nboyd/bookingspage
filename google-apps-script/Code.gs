@@ -1,0 +1,101 @@
+const SPREADSHEET_ID = 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE';
+const REQUEST_SHEET_NAME = 'Requests';
+const NOTIFICATION_EMAIL = 'nboyd3@nd.edu';
+const ALLOWED_GENRES = ['Pop', 'House', 'RNB', 'Latin', 'Rock', 'Country'];
+
+function doPost(e) {
+  try {
+    const params = e && e.parameter ? e.parameter : {};
+    const songRequest = normalizeText_(params.songRequest);
+    const genre = normalizeText_(params.genre);
+    const honeypot = normalizeText_(params.website);
+
+    if (honeypot) {
+      return buildIframeResponse_({ type: 'song-request-result', status: 'success' });
+    }
+
+    if (!songRequest || !genre) {
+      return buildIframeResponse_({
+        type: 'song-request-result',
+        status: 'error',
+        message: 'Missing required fields.'
+      });
+    }
+
+    if (!ALLOWED_GENRES.includes(genre)) {
+      return buildIframeResponse_({
+        type: 'song-request-result',
+        status: 'error',
+        message: 'Invalid genre selection.'
+      });
+    }
+
+    const sheet = getRequestSheet_();
+    sheet.appendRow([new Date(), escapeFormula_(songRequest), genre]);
+
+    MailApp.sendEmail({
+      to: NOTIFICATION_EMAIL,
+      subject: `New DJ request: ${genre}`,
+      body: [
+        'A new song request came in.',
+        '',
+        `Song Request: ${songRequest}`,
+        `Genre: ${genre}`,
+        `Timestamp: ${new Date().toLocaleString()}`
+      ].join('\n')
+    });
+
+    return buildIframeResponse_({ type: 'song-request-result', status: 'success' });
+  } catch (error) {
+    console.error(error);
+    return buildIframeResponse_({
+      type: 'song-request-result',
+      status: 'error',
+      message: 'Something went wrong while saving the request.'
+    });
+  }
+}
+
+function getRequestSheet_() {
+  if (!SPREADSHEET_ID || SPREADSHEET_ID === 'PASTE_YOUR_GOOGLE_SHEET_ID_HERE') {
+    throw new Error('Set SPREADSHEET_ID before deploying the web app.');
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = spreadsheet.getSheetByName(REQUEST_SHEET_NAME);
+
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(REQUEST_SHEET_NAME);
+  }
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Timestamp', 'Song Request', 'Genre']);
+  }
+
+  return sheet;
+}
+
+function buildIframeResponse_(payload) {
+  const safePayload = JSON.stringify(payload);
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <body>
+        <script>
+          window.parent.postMessage(${safePayload}, '*');
+        </script>
+      </body>
+    </html>
+  `;
+
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function normalizeText_(value) {
+  return String(value || '').trim();
+}
+
+function escapeFormula_(value) {
+  return /^[=+\-@]/.test(value) ? "'" + value : value;
+}

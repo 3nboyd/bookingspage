@@ -1,6 +1,16 @@
-const toggleButton = document.getElementById('contact-toggle');
+const REQUEST_RESULT_TYPE = 'song-request-result';
+const REQUEST_TIMEOUT_MS = 12000;
 
-if (toggleButton) {
+initContactToggle();
+initSongRequestForm();
+
+function initContactToggle() {
+  const toggleButton = document.getElementById('contact-toggle');
+
+  if (!toggleButton) {
+    return;
+  }
+
   const email = toggleButton.dataset.email || 'contactme.nbz@gmail.com';
   let isRevealed = false;
   let resetTimer;
@@ -70,4 +80,143 @@ if (toggleButton) {
     toggleButton.setAttribute('aria-pressed', 'false');
     setHiddenLabel();
   });
+}
+
+function initSongRequestForm() {
+  const form = document.getElementById('song-request-form');
+
+  if (!form) {
+    return;
+  }
+
+  const statusNode = document.getElementById('song-request-status');
+  const submitButton = document.getElementById('song-request-submit');
+  const requestInput = document.getElementById('song-request');
+  const genreInputs = Array.from(form.querySelectorAll('input[name="genre"]'));
+  const iframe = document.getElementById('song-request-target');
+  const configuredEndpoint = getSongRequestEndpoint();
+
+  let isSubmitting = false;
+  let responseTimer;
+
+  const setStatus = (type, message) => {
+    if (!statusNode) {
+      return;
+    }
+
+    statusNode.textContent = message || '';
+    statusNode.className = 'form-status';
+
+    if (type) {
+      statusNode.classList.add(`is-${type}`);
+    }
+  };
+
+  const setSubmitting = (nextSubmitting) => {
+    isSubmitting = nextSubmitting;
+    if (submitButton) {
+      submitButton.disabled = nextSubmitting;
+      submitButton.textContent = nextSubmitting ? 'Sending Request...' : 'Send Song Request';
+    }
+  };
+
+  const getTrimmedSongRequest = () => (requestInput ? requestInput.value.trim() : '');
+
+  const getSelectedGenre = () => {
+    const selectedInput = genreInputs.find((input) => input.checked);
+    return selectedInput ? selectedInput.value : '';
+  };
+
+  const validateForm = () => {
+    const songRequest = getTrimmedSongRequest();
+    const genre = getSelectedGenre();
+
+    if (!songRequest) {
+      setStatus('error', 'Add the song name and artist before you send the request.');
+      if (requestInput) {
+        requestInput.focus();
+      }
+      return false;
+    }
+
+    if (!genre) {
+      setStatus('error', 'Pick a genre so I know where the request should land.');
+      if (genreInputs[0]) {
+        genreInputs[0].focus();
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  window.addEventListener('message', (event) => {
+    if (!isSubmitting || event.source !== iframe.contentWindow) {
+      return;
+    }
+
+    const { data } = event;
+    if (!data || typeof data !== 'object' || data.type !== REQUEST_RESULT_TYPE) {
+      return;
+    }
+
+    clearTimeout(responseTimer);
+    setSubmitting(false);
+
+    if (data.status === 'success') {
+      form.reset();
+      setStatus('success', 'Request received. I have it in the queue for the night.');
+      return;
+    }
+
+    setStatus('error', data.message || 'The request did not go through. Try again in a second.');
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!configuredEndpoint) {
+      setStatus('error', 'Song requests are not connected yet. Add the deployed Google Apps Script URL in site-config.js.');
+      return;
+    }
+
+    if (requestInput) {
+      requestInput.value = getTrimmedSongRequest();
+    }
+
+    form.action = configuredEndpoint;
+    setSubmitting(true);
+    setStatus('sending', 'Sending your request...');
+    clearTimeout(responseTimer);
+    HTMLFormElement.prototype.submit.call(form);
+
+    responseTimer = setTimeout(() => {
+      if (!isSubmitting) {
+        return;
+      }
+
+      setSubmitting(false);
+      setStatus('error', 'No confirmation came back from the request inbox. Try again, or double-check the Google Apps Script deployment URL.');
+    }, REQUEST_TIMEOUT_MS);
+  });
+}
+
+function getSongRequestEndpoint() {
+  const endpoint = window.NBZ_SITE_CONFIG && typeof window.NBZ_SITE_CONFIG.songRequestEndpoint === 'string'
+    ? window.NBZ_SITE_CONFIG.songRequestEndpoint.trim()
+    : '';
+
+  if (!endpoint || endpoint.includes('REPLACE_WITH_YOUR_DEPLOYED_APP_ID')) {
+    return '';
+  }
+
+  return endpoint;
 }

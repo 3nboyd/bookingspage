@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noah Boyd | Song Requests</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="page-shell page-shell--narrow">
+    <header class="hero">
+      <a class="back-link" href="../index.html">Back to bookings and contact</a>
+      <div class="hero__content">
+        <p class="hero__eyebrow">Direct Song Request</p>
+        <h1 class="hero__title">What should I play tonight?</h1>
+        <p class="hero__lede">Drop one must-play track, pick the lane, and I will pull from the request list live when it fits the room.</p>
+      </div>
+    </header>
+
+    <main class="content content--tight">
+      <section class="request-panel">
+        <form id="song-request-form" class="request-form" method="post" target="song-request-target" novalidate>
+          <div class="form-field">
+            <label class="field-label" for="song-request">Song Name &amp; Artist</label>
+            <input
+              id="song-request"
+              class="text-input"
+              type="text"
+              name="songRequest"
+              placeholder="Example: Levels - Avicii"
+              autocomplete="off"
+              maxlength="160"
+              required
+            >
+          </div>
+
+          <fieldset class="form-field genre-field">
+            <legend class="field-label">Pick a Genre</legend>
+            <div class="genre-grid">
+              <label class="genre-option">
+                <input type="radio" name="genre" value="Pop">
+                <span>Pop</span>
+              </label>
+              <label class="genre-option">
+                <input type="radio" name="genre" value="House">
+                <span>House</span>
+              </label>
+              <label class="genre-option">
+                <input type="radio" name="genre" value="RNB">
+                <span>R&amp;B</span>
+              </label>
+              <label class="genre-option">
+                <input type="radio" name="genre" value="Latin">
+                <span>Latin</span>
+              </label>
+              <label class="genre-option">
+                <input type="radio" name="genre" value="Rock">
+                <span>Rock</span>
+              </label>
+              <label class="genre-option">
+                <input type="radio" name="genre" value="Country">
+                <span>Country</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" type="text" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <p class="helper-copy">One request at a time. Every submission lands in a live request inbox so I can check it during gigs.</p>
+
+          <button id="song-request-submit" class="cta" type="submit">Send Song Request</button>
+          <p id="song-request-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="section">
+        <a class="ghost-btn ghost-btn--link" href="../index.html">Need bookings or contact info? Head to the main page.</a>
+      </section>
+    </main>
+
+    <iframe
+      id="song-request-target"
+      class="visually-hidden-frame"
+      name="song-request-target"
+      title="Song request submission target"
+    ></iframe>
+  </div>
+
+  <script src="../site-config.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
