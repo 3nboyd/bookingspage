@@ -27,7 +27,7 @@ This folder contains the Google Apps Script backend for the song request page.
 
 ## 4. Connect the website
 
-1. Open `/Users/nbz/Library/Mobile Documents/com~apple~CloudDocs/Github/bookingspage/site-config.js`.
+1. Open `site-config.js` in the repository root.
 2. Replace `REPLACE_WITH_YOUR_DEPLOYED_APP_ID` with the real Apps Script deployment ID or paste the full `/exec` URL.
 3. Publish the updated site.
 
