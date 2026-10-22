@@ -28,7 +28,7 @@ This folder contains the Google Apps Script backend for the song request page.
 ## 4. Connect the website
 
 1. Open `site-config.js` in the repository root.
-2. Replace `REPLACE_WITH_YOUR_DEPLOYED_APP_ID` with the real Apps Script deployment ID or paste the full `/exec` URL.
+2. Set `window.NBZ_SITE_CONFIG.songRequestEndpoint` to the full deployed URL you copied, ending in `/exec`. Keep the value as a quoted string. The frontend also accepts a deployment ID, but using the full URL makes the destination explicit.
 3. Publish the updated site.
 
 ## 5. Verify the flow
